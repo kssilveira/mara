@@ -1,0 +1,53 @@
+#include <cstdio>
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+bitset<2000000001> memo;
+bitset<2000000001> solved;
+
+
+bool solve(int n, int *move) {
+  if (solved[n]) {
+    return memo[n];
+  }
+
+  int res = 1;
+  int v = n;
+  while (v > 0) {
+    int d = v % 10;
+    v /= 10;
+    if (n - d >= 0) {
+      int next = solve(n - d, move);
+      res = res && next;
+      if (res == 0) {
+        *move = n - d;
+        break;
+      }
+    }
+  }
+  res = 1 - res;
+  solved[n] = true;
+  memo[n] = res;
+  cout << n << ": " << res << endl;
+  return res;
+}
+
+int main() {
+  int n;
+
+  memo.reset();
+  solved.reset();
+
+  cin >> n;
+
+
+  int move = 0;
+  bool res = solve(n, &move);
+
+  cout << (res ? "1" : "2") << endl;
+  if (res) {
+    cout << move << endl;
+  }
+}

@@ -1,0 +1,42 @@
+#include <cstdio>
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+bitset<2000000001> dp;
+int main() {
+  int n;
+
+  dp[0] = 1;
+
+  cin >> n;
+
+  int move = 0;
+  for (int i = 1; i <= n; i++) {
+    int v = i;
+    int res = 1;
+    while (v > 0) {
+      int d = v % 10;
+      v /= 10;
+      int next = i - d;
+      if (next >= 0) {
+        res = dp[next];
+        if (res == 0) {
+          move = i - d;
+          break;
+        }
+      }
+    }
+    res = 1 - res;
+    dp[i] = res;
+    // cout << i << ": " << res << endl;
+  }
+
+  cout << (dp[n] ? "1" : "2") << endl;
+  if (dp[n]) {
+    cout << move << endl;
+  }
+}
+
+
