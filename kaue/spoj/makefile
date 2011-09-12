@@ -1,4 +1,4 @@
-all: qcj3
+all: baldes
 	./$< < $<.in
 
 CXXFLAGS = -Wall -g
