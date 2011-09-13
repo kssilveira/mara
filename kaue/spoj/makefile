@@ -1,4 +1,4 @@
-all: baldes
+all: byecakes
 	./$< < $<.in
 
 CXXFLAGS = -Wall -g
