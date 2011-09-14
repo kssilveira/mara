@@ -1,4 +1,4 @@
-all: 4870
+all: ndd
 	./$< < $<.in
 
 CXXFLAGS = -Wall
