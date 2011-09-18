@@ -40,12 +40,42 @@ int main() {
   for (int i = 0; i < n; i++) {
     cin >> x[i] >> y[i];
   }
-  int res = 0;
   int last[100002] = {0};
   for (int i = 0; i < n; i++) {
+    int res = 0;
     int v = x[i];
-    for (int i = 2; i <= v / 2; i++) {
-      if (v % i == 0) {
-        if (last[i]) {
+    // cout << "i: " << i << " v: " << v << endl;
+    for (int j = 1; j <= ceil(sqrt(v)); j++) {
+      if (v % j == 0) {
+        // cout << "j: " << j << endl;
+        if (last[j]) {
+          if (last[j] - 1 >= i - y[i]) {
+          } else {
+            // cout << "+ " << j << endl;
+            res++;
+          }
+        } else {
+          res++;
+          // cout << "! " << j << endl;
+        }
+        last[j] = i + 1;
+
+        int k = v / j;
+        if (k == j) continue;
+        // cout << "k: " << k << endl;
+        if (last[k]) {
+          if (last[k] - 1 >= i - y[i]) {
+          } else {
+            // cout << "+ " << k << endl;
+            res++;
+          }
+        } else {
+          res++;
+          // cout << "! " << k << endl;
+        }
+        last[k] = i + 1;
+      }
+    }
+    cout << res << endl;
   }
 }
