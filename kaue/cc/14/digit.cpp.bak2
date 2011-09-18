@@ -1,0 +1,86 @@
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+
+int count(int n) {
+  int res = 0;
+  while (n) {
+    n /= 10;
+    res++;
+  }
+  return res;
+}
+
+int solve(int n);
+
+int solverev(int n) {
+  // if (memorev[n])
+  //*
+  int res = -1;
+
+  int v = n;
+  int d = count(n);
+
+  if (n % 10 != 0) res = n;
+  int temp = n;
+  while (temp >= 100) temp /= 10;
+  if (temp - (temp % 10) != 0) res = n;
+
+  for (int i = 0; i <= d; i++) {
+    int first = v % 10;
+    int td = count(v);
+    for (int j = 0; j < td - 1; j++) {
+      first *= 10;
+    }
+    int nv = first + v / 10;
+    res = max(res, nv);
+    v = nv;
+    // cout << nv << endl;
+    res = max(res, solve(nv));
+  }//*/
+  return res;
+}
+
+int solve(int n) {
+  int d = count(n);
+  int v = n;
+  int res = -1;
+  if (n % 10 != 0) res = n;
+
+  int temp = n;
+  while (temp >= 100) temp /= 10;
+  if (temp - (temp % 10) != 0) res = n;
+
+  // cout << "v: " << v << endl;
+  for (int i = 0; i <= d; i++) {
+    int first = v;
+    int nv = 0;
+    int pot = 10;
+    while (first >= 10) {
+      nv += (first % 10) * pot;
+      pot *= 10;
+      first /= 10;
+    }
+    nv += first;
+    // cout << nv << endl;
+    res = max(res, nv);
+    v = nv;
+    res = max(res, solverev(nv));
+  }
+
+  res = max(res, solverev(n));
+
+  return res;
+}
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    int res = solve(n);
+    cout << res << endl;
+
+  }
+}
