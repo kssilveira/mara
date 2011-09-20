@@ -1,4 +1,4 @@
-all: byecakes
+all: candn
 	./$< < $<.in
 
 CXXFLAGS = -Wall -g
