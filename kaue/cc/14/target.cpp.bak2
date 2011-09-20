@@ -1,0 +1,63 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+
+using namespace std;
+
+typedef long double ld;
+
+ld vet[3];
+ld *prob = vet + 1;
+ld memo[1 << 18];
+
+int N;
+
+#define INF 1e100
+
+ld solve(int mask) {
+  // mask == 111...1, everyone is dead
+  if (mask == (1 << N) - 1) {
+    return 0;
+  }
+  // memoization
+  if (memo[mask]) {
+    return memo[mask];
+  }
+  ld& res = memo[mask];
+  res = INF;
+  // for each shot
+  for (int i = 0; i < N; i++) {
+    ld num = 1, den = 1;
+    bool good = false;
+    for (int j = -1; j <= 1; j++) {  // for each (left, straigth, right)
+      int index = i + j;
+      int mask_index = 1 << index;
+      if (index < 0 || index == N || (mask & mask_index)) {
+        // if nothing to kill
+        den -= prob[j];
+        continue;
+      }
+      good = true;  // at least one killed
+      ld next = solve(mask | mask_index);
+      num += prob[j] * next;
+    }
+    if (good) {
+      res = min(res, num / den);
+    }
+  }
+  return res;
+}
+
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    cin >> N >> vet[0] >> vet[1] >> vet[2];
+    memset(memo, 0, sizeof(*memo) * (1 << N));
+    vet[0] /= 100;
+    vet[1] /= 100;
+    vet[2] /= 100;
+    ld res = solve(0);
+    cout << res << endl;
+  }
+}

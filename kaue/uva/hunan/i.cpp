@@ -1,5 +1,6 @@
 // http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=244&page=show_problem&problem=3718
-// TODO: closed formula for the recursion.
+// TODO: closed formula for the recursion
+//       or matrix exponentiation
 
 #include <iostream>
 

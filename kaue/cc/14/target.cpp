@@ -6,49 +6,63 @@ using namespace std;
 
 typedef long double ld;
 
-ld l, s, r;
+ld vet[3];
+ld *prob = vet + 1;
+ld memo[2 << 18]; // extra bit: mask size
 
-ld last[19][1 << 18];
+#define INF 1e100
 
-ld solve(int n, int mask, int depth) {
-  ld res = 0;
-  if (depth > 2 * n) return 0;
-  if (n == 1) {
-    // return 1./ max(l, max(s, r));
-    return max(l, max(s, r));
+ld solve(int mask, int n) {
+  // mask == 111...1, everyone is dead
+  if (mask == (1 << n) - 1) {
+    return 0;
   }
+  // memoization
+  ld& res = memo[mask | (1 << n)]; // extra bit: mask size
+  if (res) {
+    return res;
+  }
+  res = INF;
+  // each shot
   for (int i = 0; i < n; i++) {
-    ld& cur = last[n][mask];
-    int maskl = mask;
-    int dl = 0;
-    int masks = mask;
-    int ds = 0;
-    int maskr = mask;
-    int dr = 0;
-
-    if (i > 0) {
-      if (mask & (1 << (i - 1))) dl = 1;
-      maskl = mask & ~(1 << (i - 1));
-    }
-    if (mask & (1 << i)) {
-      ds = 1;
-    }
-    masks = mask & ~(1 << i);
-    if (i < n - 1) {
-      if (mask & (1 << (i + 1))) {
-        dr = 1;
+    ld num = 1, den = 1;
+    bool good = false;
+    for (int j = -1; j <= 1; j++) {  // left, straigth, right
+      int index = i + j;
+      int mask_index = 1 << index;
+      if (index < 0 || index == n || (mask & mask_index)) {
+        // nothing to kill
+        den -= prob[j];
+        continue;
       }
-      maskr = mask & ~(1 << (i + 1));
+      good = true;  // at least one killed
+      ld next;
+      int right_is_dead = (mask << 1) & mask_index,
+          left_is_dead = (mask >> 1) & mask_index,
+          right_part = mask & (mask_index - 1),
+          left_part = mask >> index,
+          nright = index,
+          nleft = n - index;
+      if (right_is_dead) {
+        if (left_is_dead) {
+          next = solve(right_part, nright) +
+                 solve(left_part >> 1, nleft - 1); // one bit less
+        } else { // right is alive
+          next = solve(right_part, nright) +
+                 solve(left_part | 1, nleft);
+        }
+      } else if (left_is_dead) { // only right is alive
+        next =
+          solve(right_part | mask_index, nright + 1) +
+          solve(left_part >> 1, nleft - 1);
+      } else {
+        next = solve(mask | mask_index, n);
+      }
+      num += prob[j] * next;
     }
-
-    cur += 1./ (l * solve(n - dl, maskl, depth + 1));
-     // cur += (l * solve(n - dl, maskl, depth + 1));
-    cur += 1./ (s * solve(n - ds, masks, depth + 1));
-     // cur += (s * solve(n - ds, masks, depth + 1));
-    cur += 1. / (r * solve(n - dr, maskr, depth + 1));
-     // cur += (r * solve(n - dr, maskr, depth + 1));
-
-    res = max(res, cur);
+    if (good) {
+      res = min(res, num / den);
+    }
   }
   return res;
 }
@@ -57,17 +71,13 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    memset(last, 0, sizeof(last));
+    memset(memo, 0, sizeof(memo));
     int n;
-    cin >> n >> l >> s >> r;
-    l /= 100;
-    s /= 100;
-    r /= 100;
-    for (int i = 0; i < 100; i++) {
-      ld res = solve(n, (1 << n) - 1, 0);
-      cout << res << endl;
-      cout << 1 / res << endl;
-      cout << endl;
-    }
+    cin >> n >> vet[0] >> vet[1] >> vet[2];
+    vet[0] /= 100;
+    vet[1] /= 100;
+    vet[2] /= 100;
+    ld res = solve(0, n);
+    printf("%.6Lf\n", res);
   }
 }
