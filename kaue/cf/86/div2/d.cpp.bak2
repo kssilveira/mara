@@ -1,0 +1,115 @@
+#include <iostream>
+#include <cstdio>
+#include <set>
+
+using namespace std;
+
+typedef unsigned long long ull;
+
+#define BASE 1001LL
+#define MOD 1000000009LL
+
+ull powmod(ull a, int n) {
+  ull res = 1;
+  while (n) {
+    if (n & 1) {
+      res = (res * a) % MOD;
+    }
+    a = (a * a) % MOD;
+    n >>= 1;
+  }
+  return res % MOD;
+}
+
+int main() {
+  string t, sbegin, send;
+  cin >> t >> sbegin >> send;
+  int n = (int) t.size(),
+      nb = (int) sbegin.size(),
+      ne = (int) send.size();
+  set<ull> res;
+  ull hashes[2010][2010];
+
+  ull hashend, hashbegin;
+  hashend = hashbegin = 0;
+  for (int i = 0; i < ne; i++) {
+    hashend *= BASE;
+    hashend %= MOD;
+    hashend += (send[ne - i - 1] - 'a' + 1);
+    hashend %= MOD;
+  }
+  for (int i = 0; i < nb; i++) {
+    hashbegin *= BASE;
+    hashbegin %= MOD;
+    hashbegin += (sbegin[nb - i - 1] - 'a' + 1);
+    hashbegin %= MOD;
+  }
+
+  const ull inv_base = powmod(BASE, MOD - 2);
+  // cout << inv_base << endl;
+
+for (int ne = 1; ne <= n; ne++) {
+  ull lastbase = 1;
+  hashes[0][ne] = 0;
+  for (int i = 0; i < ne; i++) {
+    hashes[0][ne] *= BASE;
+    hashes[0][ne] %= MOD;
+    hashes[0][ne] += (t[ne - i - 1] - 'a' + 1);
+    hashes[0][ne] %= MOD;
+    lastbase *= BASE;
+    lastbase %= MOD;
+  }
+  lastbase *= inv_base;
+  lastbase %= MOD;
+
+  for (int i = 1; i + ne - 1 < n; i++) {
+    hashes[i][ne] = ((lastbase * (t[i + ne - 1] - 'a' + 1)) % MOD)  +
+      ((((hashes[i - 1][ne] + (MOD - (t[i - 1] - 'a' + 1))) % MOD) *
+        inv_base) % MOD);
+    hashes[i][ne] %= MOD;
+  }
+}
+
+  /*
+  for (int i = 0; i < n; i++) {
+    cout << hashes[i][ne] << " ";
+  }
+  cout << endl << "begin: " << hashbegin << endl;
+  cout << endl << "end: " << hashend << endl;
+  // cout << "last: " << lastbase << endl;//*/
+
+  for (int i = 0; i + nb - 1 < n; i++) {
+    // bool bad = false;
+    // for (int j = 0; j < nb; j++) {
+      // if (t[i + j] != sbegin[j]) {
+        // bad = true;
+        // break;
+      // }
+    // }
+    // if (bad) continue;
+    if (hashes[i][nb] != hashbegin) continue;
+    for (int j = i; j + ne - 1 < n; j++) {
+      // bool bad = false;
+      // for (int k = 0; k < ne; k++) {
+        // if (t[j + k] != send[k]) {
+          // bad = true;
+          // break;
+        // }
+      // }
+      // if (bad) continue;
+      if (hashes[j][ne] != hashend) continue;
+      // string sub = t.substr(i, j + ne - i);
+      // cout << sub << endl;
+
+      // ull hash = 5381;
+      // for (int k = i; k < j + ne; k++) {
+        // hash = ((hash << 5) + hash) + t[k];
+      // }
+
+      ull hash = hashes[i][j + ne - i];
+      // cout << hash << endl;
+      res.insert(hash);
+    }
+  }
+  cout << res.size() << endl;
+}

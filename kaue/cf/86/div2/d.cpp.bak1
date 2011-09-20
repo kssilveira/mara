@@ -1,0 +1,74 @@
+#include <iostream>
+#include <cstdio>
+#include <set>
+
+using namespace std;
+
+typedef unsigned long long ull;
+
+int main() {
+  string t, sbegin, send;
+  cin >> t >> sbegin >> send;
+  int n = (int) t.size(),
+      nb = (int) sbegin.size(),
+      ne = (int) send.size();
+  set<ull> res;
+  ull hashes[2010];
+
+  hashes[0] = 0;
+  ull lastbase = 1;
+  ull hashend = 0;
+  for (int i = 0; i < ne; i++) {
+#define BASE 30
+    hashes[0] *= BASE;
+    hashes[0] += (t[ne - i - 1] - 'a' + 1);
+    hashend *= BASE;
+    hashend += (send[ne - i - 1] - 'a' + 1);
+    lastbase *= BASE;
+  }
+  lastbase /= BASE;
+
+  for (int i = 1; i + ne - 1 < n; i++) {
+    hashes[i] = lastbase * (t[i + ne - 1] - 'a' + 1)  +
+      hashes[i - 1] / BASE;
+  }
+
+  /*
+  for (int i = 0; i < n; i++) {
+    cout << hashes[i] << " ";
+  }
+  cout << endl << "end: " << hashend << endl;
+  cout << "last: " << lastbase << endl;//*/
+
+  for (int i = 0; i < n; i++) {
+    bool bad = false;
+    for (int j = 0; j < nb; j++) {
+      if (t[i + j] != sbegin[j]) {
+        bad = true;
+        break;
+      }
+    }
+    if (bad) continue;
+    for (int j = i; j + ne - 1 < n; j++) {
+      bool bad = false;
+      if (hashes[j] != hashend) bad = true;
+      // for (int k = 0; k < ne; k++) {
+        // if (t[j + k] != send[k]) {
+          // bad = true;
+          // break;
+        // }
+      // }
+      if (bad) continue;
+      // string sub = t.substr(i, j + ne - i);
+
+      ull hash = 5381;
+      // for (int k = i; k < j + ne; k++) {
+        // hash = ((hash << 5) + hash) + t[k];
+      // }
+
+      // cout << sub << endl;
+      res.insert(hash);
+    }
+  }
+  cout << res.size() << endl;
+}
