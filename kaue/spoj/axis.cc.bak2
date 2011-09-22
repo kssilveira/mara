@@ -59,10 +59,9 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-pair<ld, ld> v[1000];
+pair<ld, ld> v[1000], w[1000], z[1000];
  
 ld sqr(ld x) { return x * x; }
-typedef pair<ld, ld> Point;
 
 template <class T1, class T2>
 ostream& operator<<(ostream& out, const pair<T1, T2>& p) {
@@ -70,22 +69,18 @@ ostream& operator<<(ostream& out, const pair<T1, T2>& p) {
   return out;
 }
 
-const ld EPS = 1e-9;
-
 int main() {
   int n;
   while (scanf("%d", &n) && n != -1) {
-    set<pair<int, int> > pt;
     ri {
       int a, b;
       scanf("%d%d", &a, &b);
-      pt.insert(make_pair(a, b));
       v[i] = make_pair((ld)a, (ld)b);
     }
     bool res = false, last = false;
     r(i, 3) {
       if (last) break;
-      //ppn(i);
+      ppn(i);
       rb(j, i + 1, n) {
         if (last) break;
         if (i == 2) {
@@ -93,7 +88,6 @@ int main() {
           i = 0;
           j = 1;
         }
-        //pn("\n\n####");
         //ppn(j);
         //ppn(v[i]);
         //ppn(v[j]);
@@ -101,54 +95,76 @@ int main() {
             (v[i].first + v[j].first) / 2,
             (v[i].second + v[j].second) / 2);
         //ppn(middle);
+        rk {
+          z[k].first = v[k].first - middle.first;
+          z[k].second = v[k].second - middle.second;
+          //ppn(k);
+          //ppn(v[k]);
+          //ppn(z[k]);
+        }
         ld hip = sqrt(sqr(v[i].first - v[j].first) +
                       sqr(v[i].second - v[j].second));
         //ppn(hip);
-        ld sinv = +(v[j].second - v[i].second) / hip;
-        ld cosv = -(v[j].first - v[i].first) / hip; // minus here??
-        if (last) {
-          ld t = sinv;
-          sinv = -cosv;
-          cosv = t;
-        }
+        ld sinv = (v[j].second - v[i].second) / hip;
+        ld cosv = (v[j].first - v[i].first) / hip; // minus here??
+        if (last) swap(sinv, cosv);
         //ppn(sinv);
         //ppn(cosv);
-        bool ok = true;
+        int cntleft = 0, cntright = 0;
         rk {
-          //pl;
+          w[k].first  = cosv * z[k].first - sinv * z[k].second;
+          w[k].second = sinv * z[k].first + cosv * z[k].second;
+          if (w[k].first < 0) cntleft++;
+          if (w[k].first > 0) cntright++;
           //ppn(k);
-          //ppn(v[k]);
-          Point translated(
-              v[k].first - middle.first,
-              v[k].second - middle.second);
-          //ppn(translated);
-          Point rotated(
-              cosv * translated.first - sinv * translated.second,
-              sinv * translated.first + cosv * translated.second);
-          //ppn(rotated);
-          Point symmetric(-rotated.first, rotated.second);
-          //ppn(symmetric);
-          Point sym_rot(
-              cosv * symmetric.first + sinv * symmetric.second,
-            - sinv * symmetric.first + cosv * symmetric.second);
-          //ppn(sym_rot);
-          Point sym_rot_trans(
-              sym_rot.first + middle.first,
-              sym_rot.second + middle.second);
-          //ppn(sym_rot_trans);
-          pair<int, int> pint(
-              round(sym_rot_trans.first + EPS),
-              round(sym_rot_trans.second + EPS));
-          //ppn(pint);
+          //ppn(z[k]);
+          //ppn(w[k]);
+        }
 
-          if (fabs(sym_rot_trans.first - pint.first) > EPS ||
-              fabs(sym_rot_trans.second - pint.second) > EPS ||
-              pt.find(pint) == pt.end()) {
-            ok = false;
+        //ppn(cntleft);
+        //ppn(cntright);
+        if (cntleft != cntright) continue;
+
+        bool found = true;
+        /*
+        sort(w, w + n);
+        //pv(w);
+        //pl;
+        bool found = false;
+        rk {
+          //ppn(k);
+          //ppn(w[k]);
+          int begin = 0, end = n - 1;
+          bool ok = false;
+          while (begin <= end) {
+            //ppn(begin);
+            //ppn(end);
+            int cur = begin + (end - begin) / 2;
+            //ppn(cur);
+            //ppn(w[cur]);
+            if (w[cur].first == -w[k].first) {
+              if (w[cur].second == w[k].second) {
+                ok = true;
+                break;
+              } else if(w[cur].second < w[k].second) {
+                begin = cur + 1;
+              } else {
+                end = cur - 1;
+              }
+            } else if(w[cur].first < -w[k].first) {
+              begin = cur + 1;
+            } else {
+              end = cur - 1;
+            }
+          }
+          //ppn(ok);
+          //pl;
+          if (!ok) {
+            found = true;
             break;
           }
-        }
-        if (ok) {
+        }//*/
+        if (!found) {
           res = true;
           //ppn(i); ppn(v[i]); ppn(j); ppn(v[j]);
           break;
