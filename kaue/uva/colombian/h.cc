@@ -1,0 +1,123 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+#define x first
+#define y second
+
+inline int sqr(int x) { return x * x; }
+
+ld get(int x, int y) {
+  // return asin(y / sqrt(sqr(x) + sqr(y)));
+  return acos(x / sqrt(sqr(x) + sqr(y)));
+}
+
+//const ld EPS = numeric_limits<ld>::epsilon();
+//const ld EPS = 1e-323;
+ 
+int main() {
+  int b;
+  //ppn(EPS);
+  while (cin >> b && b > 0) {
+    vector<pair<pair<ld, ld>, pair<pair<int, int>, pair<int, int> > > > val;
+    r(i, b) {
+      int x1, y1, x2, y2;
+      cin >> x1 >> y1 >> x2 >> y2;
+      ld alpha1 = get(x1, y1),
+         alpha2 = get(x2, y2);
+      if (alpha1 >= alpha2) {
+        val.push_back(make_pair(
+              make_pair(alpha1, alpha2),
+              make_pair(make_pair(x1, y1),
+                make_pair(x2, y2))));
+      } else {
+        val.push_back(make_pair(
+              make_pair(alpha2, alpha1),
+              make_pair(make_pair(x2, y2),
+                make_pair(x1, y1))));
+      }
+    }
+    sort(all(val));
+    /*
+    r(i, b) {
+      cout << '(' << val[i].first.x << ',' << val[i].first.y << ") ";
+    }
+    cout << endl;//*/
+    int res = 0;
+    int i = 0;
+    while (i < s(val)) {
+      //ppn(i);
+      res++;
+      ld end = val[i].first.first;
+      int xend = val[i].second.first.x;
+      int yend = val[i].second.first.y;
+      int j = i + 1;
+      //while (j < s(val) && val[j].second <= end) j++;
+      while (j < s(val) && (val[j].first.second < end || 
+            xend * val[j].second.second.y == 
+            yend * val[j].second.second.x
+          //fabs(val[j].second - end) <= EPS)) j++;
+            )) j++;
+      i = j;
+    }
+    cout << res << endl;
+  }
+} 
+

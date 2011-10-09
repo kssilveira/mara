@@ -1,0 +1,127 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+int main() {
+  int l, g;
+  while (cin >> l >> g && l > 0) {
+    vector<pair<int, int> > val;
+    r(i, g) {
+      int x, r;
+      cin >> x >> r;
+      //val.push_back(make_pair(min(l, x + r), max(0, x - r)));
+      val.push_back(make_pair(max(0, x - r), min(l, x + r)));
+    }
+    sort(all(val));
+    //*
+    r(i, s(val)) {
+      cout << '(' << val[i].first << "," << val[i].second << ") ";
+    }
+    cout << endl;//*/
+    map<int, int> cnt;
+    r(i, s(val)) {
+      int beg = val[i].first, end = val[i].second;
+      if (beg == 0 || cnt[beg]) {
+        if (cnt[end] == 0) {
+          cnt[end] = cnt[beg] + 1;
+        } else {
+          cnt[end] = min(cnt[end], cnt[beg] + 1);
+        }
+      }
+    }
+
+    if (cnt[l]) {
+      cout << s(val) - cnt[l] << endl;
+    } else {
+      cout << -1 << endl;
+    }
+        
+
+    //int cur = -1;
+    //r(i, s(val)) {
+      //if (val[i].second < cur) continue;
+      //res.push_back(make_pair(val[i].second, val[i].first));
+      //cur = val[i].first;
+      //ppn(i);
+      //ppn(cur);
+    //}
+    /*
+    r(i, s(res)) {
+      cout << '(' << res[i].first << "," << res[i].second << ") ";
+    }
+    cout << endl;//*/
+    //int number = s(val) - s(res);
+    //bool found = false;
+    //if (res[0].first != 0) found = true;
+
+    //rb(i, 1, s(res)) {
+      //if (res[i].first != res[i - 1].second) {
+        //found = true;
+        //break;
+      //}
+    //}
+
+    //if (res[s(res) - 1].second != l) found = true;
+    
+    //if (found) number = -1;
+    //cout << number << endl;
+  }
+} 
+
