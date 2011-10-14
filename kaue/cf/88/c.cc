@@ -59,7 +59,7 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
  
-    char s[5010];
+char s[5010];
 
 bool gone[5010], processed[5010];
 bool graph[5010][5010];
@@ -88,7 +88,6 @@ bool dfs(int cur) {
 
 int main() {
   cin >> n;
-  res.clear();
   memset(graph, 0, sizeof(graph));
   ri {
     scanf("%s", s);
@@ -103,11 +102,13 @@ int main() {
 
   memset(processed, 0, sizeof(processed));
   ri {
+    res.clear();
     memset(gone, 0, sizeof(gone));
     if (!processed[i] && dfs(i)) {
       res.push_back(res[1]);
       int n = s(res);
       //pv(res);
+      /*
       r(i, n - 1) {
         r(j, n) {
           if (graph[res[i]][j] && graph[j][res[i + 1]]) {
@@ -116,6 +117,20 @@ int main() {
               j + 1 << " " <<
               res[i + 1] + 1 << endl;
             return 0;
+          }
+        }
+      }//*/
+
+      r(i, n) {
+        rb(j, i + 1, n) {
+          rb(k, j + 1, n) {
+            if (graph[res[i]][res[k]] && graph[res[k]][res[j]] &&
+                graph[res[j]][res[i]]) {
+              cout << res[i] + 1 << " " <<
+                res[k] + 1 << " " <<
+                res[j] + 1 << endl;
+              return 0;
+            }
           }
         }
       }
@@ -128,6 +143,8 @@ int main() {
           //break;
         //}
       //}
+      //cout << "batata" << endl;
+      return 0;
     }
   } 
   cout << -1 << endl;
