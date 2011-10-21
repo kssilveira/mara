@@ -1,0 +1,46 @@
+4
+
+3
+John Doe
+Jane Smith
+Sirhan Sirhan
+1 2 3
+2 1 3
+2 3 1
+1 2 3
+3 1 2
+
+5
+John Doe
+Jane smith
+Sirhan asdf
+asdf asdf
+bla bla
+1 2 3 4 5
+1 2 3 4 5
+2 3 4 4 5
+2 3 5 4 5
+3 4 5 4 5
+
+5
+John Doe
+Jane smith
+Sirhan asdf
+asdf asdf
+bla bla
+1 2 3 4 5
+2 2 3 4 5
+3 3 4 4 5
+4 3 5 4 5
+5 4 5 4 5
+
+3
+John Doe
+Jane Smith
+Sirhan Sirhan
+1 2 3
+2 1 3
+2 3 1
+1 2 3
+3 1 2
+
