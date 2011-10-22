@@ -1,0 +1,166 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+vector<pair<int, int> > v;
+int N, K, delta;
+
+int ind[1010][1010];
+bool gone[1010][1010];
+int memo[1010][1010];
+
+int solve(int cur, int n) {
+  //ppn(cur); ppn(n);
+  int first = cur;
+  int last = N - n + 1;
+  if (n != K) {
+    int before = cur - delta - (K - n);
+    if (before == 0) {
+      first++;
+    }
+  }
+  //ppn(first); ppn(last);
+  if (last < first) {
+    return -10000000;
+  }
+  if (n == 0) {
+    return 0;
+  }
+  int& res = memo[cur][n];
+  if (gone[cur][n]) return res;
+  gone[cur][n] = true;
+  res = -1;
+  for (int i = first; i <= last; i++) {
+    int next = -v[i].second + solve(i + 1, n - 1);
+    if (next >= 0 && next >= res) {
+      res = next;
+      ind[cur][n] = i;
+    }
+    if (next < 0) break;
+  }
+  if (res == -1) {
+    return res = -10000000;
+  }
+  return res;
+}
+ 
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    v.clear();
+    memset(gone, 0, sizeof(gone));
+    int n;
+    cin >> n;
+    N = n;
+    string name;
+    cin >> name;
+    ri {
+      int p, j;
+      cin >> p >> j;
+      v.push_back(make_pair(p, -j));
+    }
+    sort(all(v));
+    reverse(all(v));
+    /*
+    ri {
+      cout << v[i].first << ", " << v[i].second << endl;
+    }
+    cout << endl;//*/
+    int first = 0;
+    delta = 0;
+    N = n;
+    if (name == "Petra") {
+      first = 1;
+      delta = 1;
+      n--;
+    }
+    int cnt = n / 2;
+    if (n % 2 == 1) {
+      cnt++;
+    }
+    K = cnt;
+    //ppn(first); ppn(cnt);
+    //ppn(N);
+    int resj = solve(first, cnt);
+    n = N;
+    //ppn(resj);
+    bool used[1010] = {0};
+    {
+      int curf = first, curn = cnt;
+      while (curn > 0) {
+        int next = ind[curf][curn];
+        ppn(next);
+        used[next] = true;
+        curn--;
+        curf = next + 1;
+      }
+    }
+    int resp = 0;
+    ri {
+      //ppn(i); ppn(used[i]);
+      if (!used[i]) {
+        resp += v[i].first;
+      }
+    }
+    cout << resp << " " << resj << endl;
+  }
+} 
+

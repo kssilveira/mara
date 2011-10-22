@@ -1,0 +1,188 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    string name;
+    cin >> name;
+    vector<pair<int, int> > v;
+    ri {
+      int p, j;
+      cin >> p >> j;
+      v.push_back(make_pair(p, -j));
+    }
+
+    sort(all(v));
+    //reverse(all(v));
+    //ppn(name);
+    /*
+    ri {
+      cout << v[i].first << ", " << v[i].second << endl;
+    }
+    cout << endl;//*/
+
+    int cnt = n / 2;
+    if (n % 2 && name == "Jan") cnt++;
+
+    int memo[1010][1010] = {{0}};
+    int pi[1010][1010] = {{0}};
+    rb(i, 1, n + 1) {
+      rb(j, 1, i + 1) {
+        if (i != cnt + 1 || j != cnt) {
+          memo[i][j] = memo[i - 1][j];
+          pi[i][j] = 3;
+        }
+
+        if (i == 1) {
+          //if (name == "Jan") {
+            memo[i][j] = -v[i - 1].second;
+            pi[i][j] = 4;
+          //}
+          continue;
+        }
+
+        int cur = -v[i - 1].second;
+        if (name != "Jan") {
+          cur = -v[i - 2].second;
+        }
+
+        bool otherneeds = i > cnt && (n - j <= n - cnt);
+        int next, nexti;
+        if (otherneeds) {
+          next = cur + memo[i - 2][j - 1];
+          nexti = 2;
+        } else {
+          next = cur + memo[i - 1][j - 1];
+          nexti = 1;
+        }
+
+        if (next > memo[i][j]) {
+          memo[i][j] = next;
+          pi[i][j] = nexti;
+        }
+
+        if (memo[i][j] == memo[i - 1][j]) {
+          pi[i][j] = 3;
+        }
+      }
+    }
+
+    //*/
+    r(i, n + 1) {
+      r(j, i + 1) {
+        cout << memo[i][j] << ' ';
+      }
+      cout << endl;
+    }
+    cout << endl;//*/
+
+    /*/
+    r(i, n + 1) {
+      r(j, i + 1) {
+        cout << pi[i][j] << ' ';
+      }
+      cout << endl;
+    }
+    cout << endl;//*/
+    
+    int resp = 0, resj = memo[n][cnt];
+    ri {
+      resp += v[i].first;
+    }
+
+    int i = n, j = cnt;
+    while (j) {
+      int cur = v[i - 1].first;
+      int next = pi[i][j];
+      if (name != "Jan" && next != 4) {
+        cur = v[i - 2].first;
+      }
+      //ppn(i);
+      //ppn(j);
+      //ppn(next);
+      //ppn(cur);
+      //ppn(resp);
+      if (next == 2) {
+        resp -= cur;
+        i -= 2;
+        j--;
+      } else if (next == 1) {
+        resp -= cur;
+        i--;
+        j--;
+      } else if (next == 3) {
+        i--;
+      } else if (next == 4) {
+        resp -= cur;
+        break;
+      } else if (next == 0) {
+        break;
+      }
+    }
+
+    cout << resp << " " << resj << endl;
+  }
+} 
+
