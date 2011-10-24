@@ -1,0 +1,181 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+int cnt;
+map<string, int> ind[2];
+int graph[500][500];
+int degree[500];
+
+int add_node(const string& Name, bool isverb = false) {
+  string name = Name;
+  char last = name[s(name) - 1];
+  if (last == '.' || last == '?') {
+    name.resize(s(name) - 1);
+  }
+  //printf("add_node(%s, %d)\n", name.c_str(), isverb);
+  map<string, int>::iterator it;
+  if ((it = ind[isverb].find(name)) == ind[isverb].end()) {
+    ind[isverb][name] = cnt;
+    return cnt++;
+  }
+  return it->second;
+}
+
+int get_node(const string& Name, bool isverb = false) {
+  string name = Name;
+  char last = name[s(name) - 1];
+  if (last == '.' || last == '?') {
+    name.resize(s(name) - 1);
+  }
+  //printf("get_node(%s, %d)\n", name.c_str(), isverb);
+  map<string, int>::iterator it;
+  if ((it = ind[isverb].find(name)) == ind[isverb].end()) {
+    return -1;
+  }
+  return it->second;
+}
+
+bool go(int from, int to) {
+  if (to == -1 || from == -1) return false;
+  if (from == to) return true;
+  queue<int> q;
+  q.push(from);
+  bool gone[500] = {0};
+  //printf("go(%i -> %i)\n", from, to);
+  while (!q.empty()) {
+    int cur = q.front(); q.pop();
+    //ppn(cur);
+    if (cur == to) return true;
+    if (gone[cur]) continue;
+    gone[cur] = true;
+    r(i, degree[cur]) {
+      int next = graph[cur][i];
+      if (next == to) return true;
+      if (!gone[next]) {
+        q.push(next);
+      }
+    }
+  }
+  return false;
+}
+
+int main() {
+  int T;
+  cin >> T;
+  string line;
+  getline(cin, line);
+  r(t, T) {
+    cnt = 0;
+    ind[0].clear();
+    ind[1].clear();
+    memset(degree, 0, sizeof(degree));
+    string res;
+    while (getline(cin, line) && line[s(line) - 1] != '!') {
+      //ppn(line);
+      vector<string> words;
+      istringstream input(line);
+      string word;
+      while (input >> word) {
+        //ppn(word);
+        words.push_back(word);
+      }
+      int nwords = s(words);
+      string lastword = words[nwords - 1];
+      bool isstat = lastword[s(lastword) - 1] == '.';
+      //ppn(isstat); ppn(nwords);
+      if (isstat) {
+        //ppn(isstat);
+        if (nwords == 3) {
+          int id1 = add_node(words[0]);
+          int id2 = add_node(words[2], words[1] == "can");
+          //graph[id1].push_back(id2);
+          graph[id1][degree[id1]++] = id2;
+        } else {
+          int id1 = add_node(words[3], true);
+          int id2 = add_node(words[5], words[4] == "can");
+          //graph[id1].push_back(id2);
+          graph[id1][degree[id1]++] = id2;
+        }
+      } else {
+        if (nwords == 3) {
+          int id1 = get_node(words[1]);
+          int id2 = get_node(words[2], words[0] == "can");
+          if (go(id1, id2)) {
+            res += 'Y';
+          } else {
+            res += 'M';
+          }
+        } else {
+          int id1 = get_node(words[4], true);
+          int id2 = get_node(words[5], words[0] == "can");
+          if (go(id1, id2))  {
+            res += 'Y';
+          } else {
+            res += 'M';
+          }
+        }
+      }
+    }
+    cout << "Case #" << t + 1 << ":\n";
+    cout << res << endl;
+  }
+} 
+

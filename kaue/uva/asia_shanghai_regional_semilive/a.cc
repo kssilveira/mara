@@ -1,0 +1,137 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+ 
+int main() {
+  int T;
+  cin >> T;
+  r(t, T) {
+    int n;
+    ll s1, v1, s2, v2;
+    cin >> n >> s1 >> v1 >> s2 >> v2;
+
+    /*
+    r(i, n) {
+      ull v = (i / s1) * v1 + 
+        ((n - i) / s2) * v2;
+      cout << v << " ";
+      i--;
+      //i += max((s2 + s1 - 1) / s1, (ll)1);
+      i += max((s1 + s2 - 1) / s2, (ll)1);
+    }
+    cout << endl;//*/
+
+    ll res = 0;
+    if (v1 == 0) {
+      res = (n / s2) * v2;
+    } else if (v2 == 0) {
+      res = (n / s1) * v1;
+    } else if (s1 == 1) {
+      res = max((n / s2) * v2 + (n % s2) * v1,
+          n * v1);
+    } else if (s2 == 1) {
+      res = max((n / s1) * v1 + (n % s1) * v2,
+          n * v2);
+    } else {
+      if (s2 < s1) {
+        swap(v1, v2);
+        swap(s1, s2);
+      }
+
+      //if (s2 / s1 == 1) {
+        //res = max((n / s1) * v1 + ((n % s1) / s2) * v2,
+            //(n / s2) * v2 + ((n % s2) / s1) * v1);
+      //} else {
+      {
+
+      //ll n1 = n / s1;
+      //ll n2 = (n - n1 * s1) / s2;
+
+
+      //ll v1 = (n / s1) * s1;
+      //ll v2 = ((n - v1) / s2) * s2;
+
+      ll n1 = n / s1;
+      ll n2 = (n % s1) / s2;
+      while (n1 >= 0) {
+        ll cur = n1 * v1 + n2 * v2;
+        if (cur > res) {
+          res = cur;
+        } else {
+          //break;
+        }
+        //ll dec = 1;
+        //ll rest = s1;
+        //ll inc = (rest + (n % s1)) / s2;
+
+        ll d1 = max((s2 + s1 - 1) / s1, (ll)1);
+        //ppn(d1);
+        n1 -= d1;
+        //n2++;
+        //n1 = (n - n2 * s2) / s1;
+        n2 = (n - n1 * s1) / s2;
+      }
+    }
+    }
+    cout << "Case #" << t + 1 << ": ";
+    cout << res << endl;
+  }
+} 
+
