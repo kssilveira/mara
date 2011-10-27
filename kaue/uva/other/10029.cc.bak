@@ -1,0 +1,186 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+const ull BASE = 5347, ALPHA = 'z' - 'a' + 1;
+ 
+int main() {
+  map<int, int> ind;
+  vector<int> graph[25010];
+  char input[25010][30];
+  int sizeinput = 0;
+  while (fgets(input[sizeinput], 30, stdin)) {
+    sizeinput++;
+  }
+
+  r(cur, sizeinput) {
+    ull hashbegin[20] = {0};
+    char* s = input[cur];
+    int n = strlen(s);
+    r(i, n) {
+      s[i] -= 'a' - 1;
+    }
+    hashbegin[0] = 0;
+    rb(i, 1, n + 1) {
+      hashbegin[i] = hashbegin[i - 1] * BASE + s[i - 1];
+    }
+    ind[hashbegin[n]] = cur + 1;
+  }
+
+  r(fcur, sizeinput) {
+    char* s = input[fcur];
+    //ppn(s);
+    int cur = fcur + 1;
+
+    ull hashbegin[20] = {0}, hashend[20] = {0};
+    ull base[20] = {0};
+    int n = strlen(s);
+    /*
+    r(i, n) {
+      s[i] -= 'a' - 1;
+    }//*/
+    hashbegin[0] = 0;
+    hashend[n] = 0;
+    base[0] = 1;
+    rb(i, 1, n + 1) {
+      base[i] = base[i - 1] * BASE;
+      hashbegin[i] = hashbegin[i - 1] * BASE + s[i - 1];
+      hashend[n - i] = s[n - i] * base[i - 1] + hashend[n - i + 1];
+    }
+    /*
+    r(i, n + 1) {
+      cout << hashbegin[i] << ' ';
+    }
+    cout << endl;
+
+    r(i, n + 1) {
+      cout << hashend[i] << ' ';
+    }
+    cout << endl;//*/
+
+    //cout << "changing" << endl;
+    r(i, n) { // changing
+      rb(j, 1, ALPHA + 1) {
+        ull other = (hashbegin[i] * BASE + j) * base[n - i - 1] +
+          hashend[i + 1];
+        //ppn(other);
+        int indother = ind[other];
+        if (indother && indother != cur) {
+          //ppn(other);
+          graph[cur].push_back(indother);
+          //graph[indother].push_back(cur);
+        }
+      }
+    }
+
+#if 0
+    //cout << "deleting" << endl;
+    r(i, n) { // deleting
+      ull other = hashbegin[i] * base[n - i - 1] + hashend[i + 1];
+      int indother = ind[other];
+      if (indother && indother != cur) {
+        //ppn(other);
+        graph[cur].push_back(indother);
+        //graph[indother].push_back(cur);
+      }
+    }
+
+    //cout << "adding" << endl;
+    r(i, n + 1) { // adding
+      rb(j, 1, ALPHA + 1) {
+        ull other = (hashbegin[i] * BASE + j) * base[n - i] +
+          hashend[i];
+        //ppn(other);
+        int indother = ind[other];
+        if (indother && indother != cur) {
+          //ppn(other);
+          graph[cur].push_back(indother);
+          //graph[indother].push_back(cur);
+        }
+      }
+    }
+#endif
+  }
+
+  int res = 0;
+  rb(start, 1, sizeinput + 1) {
+    queue<pair<int, int> > q;
+    q.push(make_pair(start, 0));
+    bool gone[25010] = {0};
+    gone[start] = 1;
+    while (!q.empty()) {
+      int cur = q.front().first,
+          dist = q.front().second;
+      q.pop();
+      res = max(res, dist);
+      r(i, s(graph[cur])) {
+        int next = graph[cur][i];
+        if (!gone[next]) {
+          gone[next] = true;
+          q.push(make_pair(next, dist + 1));
+        }
+      }
+    }
+  }
+
+  cout << res << endl;
+  //cout << sizeinput << endl;
+} 
+
