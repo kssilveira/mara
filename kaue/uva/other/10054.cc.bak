@@ -1,0 +1,134 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+ 
+int main() {
+  int T;
+  cin >> T;
+  bool second = false;
+  r(tT, T) {
+    if (second) cout << endl;
+    second = true;
+    int n;
+    cin >> n;
+    int v[1010][2];
+    ri {
+      cin >> v[i][0] >> v[i][1];
+      //ppn(v[i][0]); ppn(v[i][1]);
+    }
+    bool used[1010] = {0};
+    used[0] = true;
+    int cur = v[0][1];
+    bool invalid = false;
+    vi res;
+    res.push_back(v[0][0]);
+    r(c, n - 1) {
+      //ppn(cur);
+      res.push_back(cur);
+      bool found = false;
+      int next = 0;
+      ri {
+        if (!used[i] &&
+            ((v[i][0] == cur && v[i][1] != v[0][0]) ||
+             (v[i][1] == cur && v[i][0] != v[0][0]))) {
+          found = true;
+          next = i;
+          //ppn(next);
+          break;
+        }
+      }
+      if (found) {
+        if (v[next][0] == cur) cur = v[next][1];
+        else cur = v[next][0];
+        used[next] = true;
+        continue;
+      }
+      ri {
+        if (!used[i] && (v[i][0] == cur || v[i][1] == cur)) {
+          found = true;
+          next = i;
+          //ppn(next);
+          break;
+        }
+      }
+      if (!found) {
+        invalid = true;
+        break;
+      }
+      if (found) {
+        if (v[next][0] == cur) cur = v[next][1];
+        else cur = v[next][0];
+        used[next] = true;
+        continue;
+      }
+    }
+    if (cur != v[0][0]) invalid = true;
+    res.push_back(cur);
+    cout << "Case #" << tT + 1 << endl;
+    if (!invalid) {
+      r(i, s(res) - 1) {
+        cout << res[i] << ' ' << res[i + 1] << endl;
+      }
+    } else {
+      cout << "some beads may be lost" << endl;
+    }
+  }
+} 
+
