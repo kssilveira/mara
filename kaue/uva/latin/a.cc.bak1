@@ -1,0 +1,215 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+#define ppp(x) p(pp(x))
+
+#define in(x) cin >> x
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+ 
+bitset<1000000> notlive;
+
+int main() {
+  int b, s;
+  while (cin >> b >> s && b > 0) {
+    notlive.reset();
+    int nmin[1000], nmax[1000];
+    int blocksize = sqrt(b) + 0.5;
+    //ppn(b);
+    //ppn(blocksize);
+    int n = (b + blocksize - 1) / blocksize;
+    //ppn(n);
+    r(i, n) {
+      nmin[i] = i * blocksize;
+      nmax[i] = min((i + 1) * blocksize - 1, b - 1);
+    }
+    rb(i, b, blocksize * n) {
+      notlive[i] = true;
+    }
+    r(i, s) {
+      /*
+      cout << "min ";
+      r(i, n) {
+        cout << nmin[i] << ' ';
+      }
+      cout << endl;
+      cout << "max ";
+      ri {
+        cout << nmax[i] << ' ';
+      }
+      cout << endl;//*/
+      int l, r;
+      cin >> l >> r;
+      l--;
+      r--;
+      //printf("(l, r) = (%d, %d)\n", l, r);
+      int begin = l / blocksize, begindelta = l % blocksize;
+      int end = r / blocksize, enddelta = r % blocksize;
+      //ppn(begin); ppn(begindelta);
+      //ppn(end); ppn(enddelta);
+
+      int resbegin = -1, resend = -1;
+      if (begin != end) {
+        rb(i, begindelta, blocksize) {
+          notlive[begin * blocksize + i] = true;
+        }
+        nmax[begin] = -1;
+        if (l == nmin[begin]) nmin[begin] = -1;
+        for (int i = begindelta - 1; i >= 0; i--) {
+          if (!notlive[begin * blocksize + i]) {
+            resbegin = begin * blocksize + i;
+            if (nmax[begin] == -1) {
+              nmax[begin] = resbegin;
+            }
+            break;
+          }
+        }
+        //ppn(__LINE__);
+        rb(i, begin + 1, end) {
+          nmin[i] = nmax[i] = -1;
+        }
+        //ppn(__LINE__);
+        r(i, enddelta + 1) {
+          notlive[end * blocksize + i] = true;
+        }
+        nmin[end] = -1;
+        if (r == nmax[end]) nmax[end] = -1;
+        rb(i, enddelta + 1, blocksize) {
+          if (!notlive[end * blocksize + i]) {
+            resend = end * blocksize + i;
+            if (nmin[end] == -1) {
+              nmin[end] = resend;
+            }
+            break;
+          }
+        }
+      } else {
+        rb(i, begindelta, enddelta + 1) {
+          notlive[begin * blocksize + i] = true;
+        }
+        if (l == nmin[begin]) {
+          nmin[begin] = -1;
+        }
+        rb(i, enddelta + 1, blocksize) {
+          if (!notlive[begin * blocksize + i]) {
+            resend = begin * blocksize + i;
+            if (nmin[begin] == -1) {
+              nmin[begin] = begin * blocksize + i;
+            }
+            break;
+          }
+        }
+        if (r == nmax[begin]) {
+          nmax[begin] = -1;
+        }
+        for (int i = begindelta - 1; i >= 0; i--) {
+          if (!notlive[begin * blocksize + i]) {
+            resbegin = begin * blocksize + i;
+            if (nmax[begin == -1]) {
+              nmax[begin] = begin * blocksize + i;
+            }
+            break;
+          }
+        }
+      }
+
+        if (resbegin == -1) {
+          for (int i = begin - 1; i >= 0; i--) {
+            if (nmax[i] != -1) {
+              resbegin = nmax[i];
+              break;
+            }
+            //if (nmin[i] != -1) {
+              //for (int j = blocksize - 1; j >= 0; j--) {
+                //if (!notlive[i * blocksize + j]) {
+                  //resbegin = i * blocksize + j;
+                  //break;
+                //}
+              //}
+              //break;
+            //}
+          }
+        }
+        if (resend == -1) {
+          rb(i, end + 1, n) {
+            if (nmin[i] != -1) {
+              resend = nmin[i];
+              break;
+            }
+            //if (nmax[i] != -1) {
+              //rb
+            //}
+          }
+        }
+
+      //ppn(resbegin);
+      //ppn(resend);
+      if (resbegin != -1) {
+        cout << resbegin + 1;
+      } else {
+        cout << '*';
+      }
+      cout << ' ';
+      if (resend != -1) {
+        cout << resend + 1;
+      } else {
+        cout << '*';
+      }
+      cout << endl;
+    }
+    cout << "-" << endl;
+  }
+} 
+
