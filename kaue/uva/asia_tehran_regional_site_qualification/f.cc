@@ -12,6 +12,7 @@
 #include <deque>
 #include <functional>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <list>
 #include <map>
@@ -44,9 +45,6 @@
 #define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
 #define pp(x) " "#x" " << x
 #define ppn(x) pn(pp(x))
-#define ppp(x) p(pp(x))
-
-#define in(x) cin >> x
  
 #define s(v) ((int) v.size())
 #define all(v) v.begin(), v.end()
@@ -58,57 +56,73 @@ typedef long long ll;
 typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
-
-bool suspect(ll b, int t, ll u, ll n) {
-  ll prod = 1;
-  while (u) {
-    if (u & 1) prod = ((prod * b) % n);
-    b = (b * b) % n;
-    u /= 2;
-  }
-  if (prod == 1) return 1;
-  rb(i, 1, t + 1) {
-    if (prod == n - 1) return 1;
-    prod = (prod * prod) % n;
-  }
-  return 0;
-}
-
-bool isprime(int n) {
-  if (n == 0 || n == 1) return 0;
-  if (n == 2 || n == 7 || n == 61) return 1;
-  ll k = n - 1;
-  int t = 0;
-  while (!(k % 2)) { t++; k /= 2; }
-  if (n > 2 && n % 2 == 0) return 0;
-  if (n > 3 && n % 3 == 0) return 0;
-  if (n > 5 && n % 5 == 0) return 0;
-  if (n > 7 && n % 7 == 0) return 0;
-  if (suspect(61, t, k, n) && suspect(7, t, k, n) &&
-      suspect(2, t, k, n)) {
-    return 1;
-  }
-  return 0;
-}
  
 int main() {
-  const int n = 10000;
-  bitset<n + 10> isnotprime;
-  isnotprime[0] = isnotprime[1] = 1;
-  r(i, 100) {
-    if (isprime(i)) {
-      cout << i << ' ';
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, m;
+    scanf("%d%d", &n, &m);
+    int row[1010], col[1010], tab[1010][1010] = {{0}};
+    memset(tab, 0, sizeof(tab));
+    ri {
+      scanf("%d", &row[i]);
     }
+    rim {
+      scanf("%d", &col[i]);
+    }
+    sort(row, row + n);
+    reverse(row, row + n);
+    sort(col, col + m);
+    reverse(col, col + m);
+    int res = 0;
+    rjm {
+      sort(row, row + n);
+      reverse(row, row + n);
+      int i = 0;
+      while (col[j] && i < n) {
+        for (; i < n; i++) {
+          if (row[i] > 0) {
+            row[i]--;
+            col[j]--;
+            res++;
+            i++;
+            break;
+          }
+        }
+      }
+      res += col[j];
+    }
+    ri {
+      res += row[i];
+    }
+    /*
+    ri {
+      r(j, row[i]) {
+        tab[i][j] = 1;
+      }
+    }
+    rjm {
+      r(i, col[j]) {
+        tab[i][j] += 2;
+      }
+    }//*/
+    /*
+    ri {
+      rjm {
+        cout << tab[i][j] << ' ';
+      }
+      cout << endl;
+    }
+    cout << endl;//*/
+    //int res = 0;
+    /*
+    ri {
+      rjm {
+        if (tab[i][j] != 0) res++;
+      }
+    }//*/
+    printf("%d\n", res);
   }
-  rb(i, 2, n) {
-    //ppn(i);
-    assert(isprime(i) == !isnotprime[i]);
-    if (isnotprime[i]) {
-      continue;
-    }
-    for (int j = i + i; j < n; j += i) {
-      isnotprime[j] = true;
-    }
-  }
-}
+} 
 

@@ -12,6 +12,7 @@
 #include <deque>
 #include <functional>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <list>
 #include <map>
@@ -44,9 +45,6 @@
 #define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
 #define pp(x) " "#x" " << x
 #define ppn(x) pn(pp(x))
-#define ppp(x) p(pp(x))
-
-#define in(x) cin >> x
  
 #define s(v) ((int) v.size())
 #define all(v) v.begin(), v.end()
@@ -59,56 +57,56 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-bool suspect(ll b, int t, ll u, ll n) {
-  ll prod = 1;
-  while (u) {
-    if (u & 1) prod = ((prod * b) % n);
-    b = (b * b) % n;
-    u /= 2;
-  }
-  if (prod == 1) return 1;
-  rb(i, 1, t + 1) {
-    if (prod == n - 1) return 1;
-    prod = (prod * prod) % n;
-  }
-  return 0;
-}
+char line[3000];
+int N;
 
-bool isprime(int n) {
-  if (n == 0 || n == 1) return 0;
-  if (n == 2 || n == 7 || n == 61) return 1;
-  ll k = n - 1;
-  int t = 0;
-  while (!(k % 2)) { t++; k /= 2; }
-  if (n > 2 && n % 2 == 0) return 0;
-  if (n > 3 && n % 3 == 0) return 0;
-  if (n > 5 && n % 5 == 0) return 0;
-  if (n > 7 && n % 7 == 0) return 0;
-  if (suspect(61, t, k, n) && suspect(7, t, k, n) &&
-      suspect(2, t, k, n)) {
-    return 1;
+int parse(int start, int& last, bool& impossible, int depth, int ind) {
+  //printf("parse(%d, %d, %d)\n", start, depth, ind);
+  int cur = line[start] - '0';
+  int res = 0;
+  if (start == N) {
+    impossible = true;
+    return -1;
   }
-  return 0;
+  if (impossible) {
+    return -1;
+  }
+  if (cur == 2) {
+    int nlast = start + 1;
+    r(i, 4) {
+      res = max(res, 1 + parse(nlast, nlast, impossible, depth + 1, i));
+    }
+    last = nlast;
+  } else {
+    last = start + 1;
+  }
+  return res;
 }
  
 int main() {
-  const int n = 10000;
-  bitset<n + 10> isnotprime;
-  isnotprime[0] = isnotprime[1] = 1;
-  r(i, 100) {
-    if (isprime(i)) {
-      cout << i << ' ';
+  int T;
+  cin >> T;
+  while (T--) {
+    scanf("%s", line);
+    N = strlen(line);
+    bool impossible = false;
+    r(i, N - 4) {
+      if (line[i] != '2') continue;
+      int cnt[3] = {0};
+      rb(j, i + 1, i + 5) {
+        cnt[line[j] - '0']++;
+      }
+      if (cnt[0] == 4 || cnt[1] == 4) {
+        impossible = true;
+      }
+    }
+    int last = 0;
+    int val = parse(0, last, impossible, 0, 0);
+    if (impossible || last != N) {
+      printf("Not Possible\n");
+    } else {
+      printf("2^%d*2^%d\n", val, val);
     }
   }
-  rb(i, 2, n) {
-    //ppn(i);
-    assert(isprime(i) == !isnotprime[i]);
-    if (isnotprime[i]) {
-      continue;
-    }
-    for (int j = i + i; j < n; j += i) {
-      isnotprime[j] = true;
-    }
-  }
-}
+} 
 

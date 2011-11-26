@@ -59,56 +59,38 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-bool suspect(ll b, int t, ll u, ll n) {
-  ll prod = 1;
-  while (u) {
-    if (u & 1) prod = ((prod * b) % n);
-    b = (b * b) % n;
-    u /= 2;
-  }
-  if (prod == 1) return 1;
-  rb(i, 1, t + 1) {
-    if (prod == n - 1) return 1;
-    prod = (prod * prod) % n;
-  }
-  return 0;
-}
+struct REC {
+  int x,y,xx,yy; // rectangle from x->xx, y->yy
+  void input() {cin>>x>>y>>xx>>yy;}
+};
 
-bool isprime(int n) {
-  if (n == 0 || n == 1) return 0;
-  if (n == 2 || n == 7 || n == 61) return 1;
-  ll k = n - 1;
-  int t = 0;
-  while (!(k % 2)) { t++; k /= 2; }
-  if (n > 2 && n % 2 == 0) return 0;
-  if (n > 3 && n % 3 == 0) return 0;
-  if (n > 5 && n % 5 == 0) return 0;
-  if (n > 7 && n % 7 == 0) return 0;
-  if (suspect(61, t, k, n) && suspect(7, t, k, n) &&
-      suspect(2, t, k, n)) {
-    return 1;
-  }
-  return 0;
-}
- 
+REC rec[101];
+map<int, int> mp;
+vector<int> vt;
+int bd[500][500];
+
 int main() {
-  const int n = 10000;
-  bitset<n + 10> isnotprime;
-  isnotprime[0] = isnotprime[1] = 1;
-  r(i, 100) {
-    if (isprime(i)) {
-      cout << i << ' ';
-    }
+  int R = 0, n = 0, x, y;
+  r(i, R) {
+    rec[i].input();
   }
-  rb(i, 2, n) {
-    //ppn(i);
-    assert(isprime(i) == !isnotprime[i]);
-    if (isnotprime[i]) {
-      continue;
-    }
-    for (int j = i + i; j < n; j += i) {
-      isnotprime[j] = true;
-    }
+  vt.clear();
+  r(i, R) {
+    vt.push_back(rec[i].x); vt.push_back(rec[i].y);
+    vt.push_back(rec[i].xx); vt.push_back(rec[i].yy);
+  }
+  vt.push_back(-100000000);
+  vt.push_back(100000000);
+  sort(all(vt));
+  mp.clear();
+  r(c, s(vt)) {
+    mp[vt[c]]=c;
+  }
+  memset(bd, 0, sizeof(bd));
+  ri {
+    for(x=mp[rec[i].x]; x<mp[rec[i].xx]; x++)
+      for(y=mp[rec[i].y]; y<mp[rec[i].yy]; y++)
+        bd[x][y]=1;
   }
 }
 

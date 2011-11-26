@@ -59,56 +59,54 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-bool suspect(ll b, int t, ll u, ll n) {
-  ll prod = 1;
-  while (u) {
-    if (u & 1) prod = ((prod * b) % n);
-    b = (b * b) % n;
-    u /= 2;
+const int MAXPATH = 100;
+char text[100000], pat[MAXPATH + 10];
+int f[MAXPATH + 10];
+
+void kmpsetup(char* pat, int* f) {
+  int i, k, len = strlen(pat);
+  for (f[0] = -1, i = 1; i < len; i++) {
+    k = f[i - 1];
+    while (k >= 0) {
+      if (pat[k] == pat[i - 1]) break;
+      else k = f[k];
+    }
+    f[i] = k + 1;
   }
-  if (prod == 1) return 1;
-  rb(i, 1, t + 1) {
-    if (prod == n - 1) return 1;
-    prod = (prod * prod) % n;
-  }
-  return 0;
 }
 
-bool isprime(int n) {
-  if (n == 0 || n == 1) return 0;
-  if (n == 2 || n == 7 || n == 61) return 1;
-  ll k = n - 1;
-  int t = 0;
-  while (!(k % 2)) { t++; k /= 2; }
-  if (n > 2 && n % 2 == 0) return 0;
-  if (n > 3 && n % 3 == 0) return 0;
-  if (n > 5 && n % 5 == 0) return 0;
-  if (n > 7 && n % 7 == 0) return 0;
-  if (suspect(61, t, k, n) && suspect(7, t, k, n) &&
-      suspect(2, t, k, n)) {
-    return 1;
+int kmpscan(char* pat, char* text, int* f) {
+  int i, k, ret = -1, len = strlen(pat);
+  for (i = k = 0; text[i]; ) {
+    if (k == -1) { i++; k = 0; }
+    else if (text[i] == pat[k]) {
+      i++; k++;
+      if (k >= len) { ret = i - len; break; }
+    } else k = f[k];
   }
-  return 0;
+  return ret;
 }
  
 int main() {
-  const int n = 10000;
-  bitset<n + 10> isnotprime;
-  isnotprime[0] = isnotprime[1] = 1;
-  r(i, 100) {
-    if (isprime(i)) {
-      cout << i << ' ';
+  int n = 2 * MAXPATH;
+  srand(0xDEADBEEF);
+  r(t, 1000) {
+    r(i, n) { text[i] = rand() % 10 + 'a'; }
+    text[n] = 0;
+    int spat = rand() % 10 + 1;
+    r(i, spat) { pat[i] = rand() % 10 + 'a'; }
+    pat[spat] = 0;
+    int res = -1;
+    r(i, n) {
+      if (!strncmp(pat, text + i, spat)) {
+        res = i;
+        break;
+      }
     }
+    if (res != -1)
+      printf("(%s, %s) = %i\n", text, pat, res);
+    kmpsetup(pat, f);
+    assert(res == kmpscan(pat, text, f));
   }
-  rb(i, 2, n) {
-    //ppn(i);
-    assert(isprime(i) == !isnotprime[i]);
-    if (isnotprime[i]) {
-      continue;
-    }
-    for (int j = i + i; j < n; j += i) {
-      isnotprime[j] = true;
-    }
-  }
-}
+} 
 

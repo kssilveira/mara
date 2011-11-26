@@ -59,56 +59,46 @@ typedef long double ld;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-bool suspect(ll b, int t, ll u, ll n) {
-  ll prod = 1;
-  while (u) {
-    if (u & 1) prod = ((prod * b) % n);
-    b = (b * b) % n;
-    u /= 2;
+const int MAX = 50000;
+int r[MAX + 10];
+int mm[MAX + 10][18]; // n, log(n) + 1
+int n = MAX;
+
+void construct() {
+  r(i, n) mm[i][0] = r[i];
+  rb(i, 1, 18) {
+    for (int j = 0; (j + (1 << i) - 1) < n; j += (1 << i)) {
+      mm[j][i] = max(mm[j][i - 1], mm[j + (1 << (i - 1))][i - 1]);
+    }
   }
-  if (prod == 1) return 1;
-  rb(i, 1, t + 1) {
-    if (prod == n - 1) return 1;
-    prod = (prod * prod) % n;
-  }
-  return 0;
 }
 
-bool isprime(int n) {
-  if (n == 0 || n == 1) return 0;
-  if (n == 2 || n == 7 || n == 61) return 1;
-  ll k = n - 1;
-  int t = 0;
-  while (!(k % 2)) { t++; k /= 2; }
-  if (n > 2 && n % 2 == 0) return 0;
-  if (n > 3 && n % 3 == 0) return 0;
-  if (n > 5 && n % 5 == 0) return 0;
-  if (n > 7 && n % 7 == 0) return 0;
-  if (suspect(61, t, k, n) && suspect(7, t, k, n) &&
-      suspect(2, t, k, n)) {
-    return 1;
+int getmax(int a, int b) {
+  if (a > b) return -1;
+  for (int i = 17; i >= 0; i--) {
+    if ((a % (1 << i)) == 0 && (a + (1 << i) - 1) <= b)
+      return max(mm[a][i], getmax(a + (1 << i), b));
   }
-  return 0;
+  return -1;
 }
  
 int main() {
-  const int n = 10000;
-  bitset<n + 10> isnotprime;
-  isnotprime[0] = isnotprime[1] = 1;
-  r(i, 100) {
-    if (isprime(i)) {
-      cout << i << ' ';
-    }
+  srand(0xDEADBEEF);
+  r(i, n) {
+    r[i] = rand() % (999999 * n);
+    //ppn(r[i]);
   }
-  rb(i, 2, n) {
-    //ppn(i);
-    assert(isprime(i) == !isnotprime[i]);
-    if (isnotprime[i]) {
-      continue;
+  construct();
+  //*
+  r(t, 1000) {
+    int a = rand() % n, b = rand() % n;
+    if (a > b) swap(a, b);
+    int res = -1;
+    for (int i = a; i <= b; i++) {
+      res = max(res, r[i]);
     }
-    for (int j = i + i; j < n; j += i) {
-      isnotprime[j] = true;
-    }
-  }
-}
+    printf("(%d, %d) = %d\n", a, b, res);
+    assert(res == getmax(a, b));
+  }//*/
+} 
 
