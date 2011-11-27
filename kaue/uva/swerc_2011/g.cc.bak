@@ -1,0 +1,297 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <iomanip>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+const int MAX = 1000010;
+int v[MAX];
+int presum[MAX];
+int minpresum[MAX];
+int minpresumind[MAX];
+int postsum[MAX];
+int minpostsum[MAX], minpostsumind[MAX];
+bitset<MAX> valid;
+ 
+int main() {
+  int n;
+  while (scanf("%d", &n) && n > 0) {
+    ri {
+      scanf("%d", &v[i]);
+    }
+    v[n] = 0;
+    //*
+    srand(0xDEADBEEF);
+while(1) {
+    const int MYMAX = 10;
+    n = rand() % (MYMAX);
+    ppn(n);
+    ri {
+      v[i] = (rand() % 2001) - 1000;
+    }
+    v[n] = 0;
+    bitset<MYMAX> myvalid;
+    ri {
+      ppn(i);
+      int sum = 0;
+      bool isvalid = true;
+      rb(j, i, n) {
+        sum += v[j];
+        ppn(j); ppn(sum);
+        if (sum < 0) {
+          isvalid = false;
+          break;
+        }
+      }
+      r(j, i) {
+        sum += v[j];
+        ppn(j); ppn(sum);
+        if (sum < 0) {
+          isvalid = false;
+          break;
+        }
+      }
+      myvalid[i] = isvalid;
+    }//*/
+
+    valid.reset();
+    //*
+    cout << "v" << endl;
+    r(i, n + 1) {
+      cout << v[i] << ' ';
+    }
+    cout << endl; //*/
+    presum[0] = 0;
+    ri {
+      presum[i + 1] = presum[i] + v[i];
+    }
+    /*
+    cout << "presum" << endl;
+    r(i, n + 1) {
+      cout << presum[i] << ' ';
+    }
+    cout << endl; //*/
+    minpresum[0] = INT_MAX;
+    minpresumind[n] = n;
+    ri {
+      //minpresum[i + 1] = min(minpresum[i], presum[i + 1]);
+      minpresum[i + 1] = minpresum[i];
+      minpresumind[i + 1] = minpresumind[i];
+      if (presum[i + 1] < minpresum[i + 1]) {
+        minpresum[i + 1] = presum[i + 1];
+        minpresumind[i + 1] = i + 1;
+      }
+    }
+    /*
+    cout << "minpresum" << endl;
+    r(i, n + 1) {
+      cout << minpresum[i] << ' ';
+    }
+    cout << endl; //*/
+    /*
+    cout << "minpresumind" << endl;
+    r(i, n + 1) {
+      cout << minpresumind[i] << ' ';
+    }
+    cout << endl; //*/
+    postsum[n] = 0;
+    for (int i = n - 1; i >= 0; i--) {
+      postsum[i] = v[i] + postsum[i + 1];
+    }
+    /*
+    cout << "postsum" << endl;
+    r(i, n + 1) {
+      cout << postsum[i] << ' ';
+    }
+    cout << endl; //*/
+    minpostsum[n] = INT_MAX;
+    minpostsumind[n] = n; // (n - 1) ???
+    for (int i = n - 1; i >= 0; i--) {
+      minpostsum[i] = minpostsum[i + 1];
+      minpostsumind[i] = minpostsumind[i + 1];
+      if (postsum[i] < minpostsum[i]) { // (i + 1) ???
+        minpostsum[i] = postsum[i];
+        minpostsumind[i] = i;
+      }
+    }
+    /*
+    cout << "minpostsum" << endl;
+    r(i, n + 1) {
+      cout << minpostsum[i] << ' ';
+    }
+    cout << endl; //*/
+    /*
+    cout << "minpostsumind" << endl;
+    r(i, n + 1) {
+      cout << minpostsumind[i] << ' ';
+    }
+    cout << endl; //*/
+    int res = 0;
+    ri {
+      //ppn(i);
+      if (v[i] < 0) continue;
+      int left = minpresum[i];
+      int right = minpostsum[i + 1];
+      int rightind = minpostsumind[i + 1];
+      int middle = presum[rightind] - presum[i];
+      if (i == n - 1) right = 0;
+      if (i == 0) left = 0;
+
+      //ppn(left); ppn(right); ppn(rightind); ppn(middle);
+      //ppn(middle + left + right);
+      //ppn(middle + right);
+
+      if (middle + left + right < 0) continue;
+      if (middle + right < 0) continue;
+
+      if (minpresumind[n] > i) {
+        int other = minpresum[n];
+        int before = presum[i];
+        if (i == 0 && other == INT_MAX) other = 0;
+        //ppn(other); ppn(before); ppn(other - before);
+        if (other - before < 0) continue;
+      }
+
+      res++;
+      //ppn(res);
+      valid[i] = true;
+    }
+//*
+  ri {
+    if (myvalid[i] != valid[i]) {
+      printf("ERROR: %i (right: %i)\n", i, (int) myvalid[i]);
+
+    //*
+    cout << "v" << endl;
+    r(i, n + 1) {
+      cout << v[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "presum" << endl;
+    r(i, n + 1) {
+      cout << presum[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "minpresum" << endl;
+    r(i, n + 1) {
+      cout << minpresum[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "minpresumind" << endl;
+    r(i, n + 1) {
+      cout << minpresumind[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "postsum" << endl;
+    r(i, n + 1) {
+      cout << postsum[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "minpostsum" << endl;
+    r(i, n + 1) {
+      cout << minpostsum[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    cout << "minpostsumind" << endl;
+    r(i, n + 1) {
+      cout << minpostsumind[i] << ' ';
+    }
+    cout << endl; //*/
+    //*
+    int res = 0;
+    ri {
+      ppn(i);
+      if (v[i] < 0) continue;
+      int left = minpresum[i];
+      int right = minpostsum[i + 1];
+      int rightind = minpostsumind[i + 1];
+      int middle = presum[rightind] - presum[i];
+      if (i == n - 1) right = 0;
+      if (i == 0) left = 0;
+
+      ppn(left); ppn(right); ppn(rightind); ppn(middle);
+      ppn(middle + left + right);
+      ppn(middle + right);
+
+      if (middle + left + right < 0) continue;
+      if (middle + right < 0) continue;
+
+      if (minpresumind[n] > i) {
+        int other = minpresum[n];
+        int before = presum[i];
+        if (i == 0 && other == INT_MAX) other = 0;
+        ppn(other); ppn(before); ppn(other - before);
+        if (other - before < 0) continue;
+      }
+
+      res++;
+      ppn(res);
+      valid[i] = true;
+    }//*/
+//*
+    }
+  }
+}
+    //*/printf("%d\n", res);
+  }
+} 
+
