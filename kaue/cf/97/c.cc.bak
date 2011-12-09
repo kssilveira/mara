@@ -1,0 +1,160 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <iomanip>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+
+#define pb push_back
+#define mp make_pair
+#define nl cout << endl
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+string s;
+bitset<100010> dead;
+
+int main() {
+  cin >> s;
+  int n = s(s);
+  int open = 0;
+  ri {
+    if (s[i] == '?') {
+      open++;
+      if (open > 2) {
+        open = 2;
+        s[i] = '0';
+      }
+    }
+  }
+  int ind[100];
+  open = 0;
+  ri {
+    if (s[i] == '?') {
+      ind[open++] = i;
+    }
+  }
+  reverse(ind, ind + open);
+
+  ppn(s);
+  ppn(open);
+
+  set<string> res;
+for (int mask = 0; mask < (1 << open); mask++) {
+  r(i, open) {
+    if (mask & (1 << i)) {
+      s[ind[i]] = '1';
+    } else {
+      s[ind[i]] = '0';
+    }
+  }
+  ppn(s);
+
+  int ma = ((n - 2) + 1) / 2;
+  //ppn(ma);
+  int pe = (n - 2) - ma;
+  //ppn(pe);
+
+  dead.reset();
+  ri {
+    if (s[i] == '1' && ma) {
+      ma--;
+      dead[i] = true;
+    }
+    if (s[i] == '0' && pe) {
+      pe--;
+      dead[i] = true;
+    }
+  }
+  ri {
+    if (s[i] == '?' && !dead[i]) {
+      if (ma) {
+        ma--;
+        dead[i] = true;
+      } else if (pe) {
+        pe--;
+        dead[i] = true;
+      }
+    }
+  }
+  ri {
+    if (s[i] == '0' && !dead[i]) {
+      if (ma) {
+        ma--;
+        dead[i] = true;
+      }
+    }
+    if (s[i] == '1' && !dead[i]) {
+      if (pe) {
+        pe--;
+        dead[i] = true;
+      }
+    }
+  }
+  string t;
+  ri {
+    if (!dead[i]) {
+      t += s[i];
+    }
+  }
+  ppn(t);
+  res.insert(t);
+}
+  ppn(s(res));
+
+  for (set<string>::iterator it = res.begin();
+      it != res.end(); ++it) {
+    cout << *it << endl;
+  }
+} 
+
