@@ -68,7 +68,7 @@ const int MAX = 100010;
 int main() {
   int n, k, h;
   cin >> n >> k >> h;
-  int m[MAX], v[MAX];
+  int m[MAX], v[MAX], res[MAX], ans[MAX];
   ri {
     cin >> m[i];
   }
@@ -81,7 +81,9 @@ int main() {
   }
   sort(all(vet));
   double begin = 0, end = 1000000010;
-  while (end - begin > EPS) {
+  int ITER = 0;
+  while (ITER < 200) {
+    ITER++;
     double cur = (begin + end) / 2;
     //ppn(cur);
     ll cnt = 1;
@@ -90,6 +92,7 @@ int main() {
       //ppn(vet[i].second.first * cur);
       if (vet[i].second.first * cur >= cnt * h) {
         //ppn(cnt);
+        res[cnt - 1] = vet[i].second.second;
         cnt++;
         if (cnt > k) {
           break;
@@ -98,25 +101,19 @@ int main() {
     }
     if (cnt > k) {
       end = cur;
+      r(i, k) {
+        ans[i] = res[i];
+      }
     } else {
       begin = cur;
     }
   }
   {
-    double cur = end;
-    //ppn(cur);
-    ll cnt = 1;
-    ri {
-      if (vet[i].second.first * cur >= cnt * h) {
-        if (cnt > 1) {
+    r(i, k) {
+        if (i > 0) {
           cout << ' ';
         }
-        cout << vet[i].second.second + 1;
-        cnt++;
-        if (cnt > k) {
-          break;
-        }
-      }
+        cout << ans[i] + 1;
     }
   }
   cout << endl;
