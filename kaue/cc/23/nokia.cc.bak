@@ -1,0 +1,138 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <iomanip>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+
+#define pb push_back
+#define mp make_pair
+#define nl cout << endl
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+/*
+int res;
+
+int solve(int begin, int end, int m, bool last) {
+  for (int i = begin + 1; i < end; i++) {
+    int next = end + 1 - begin;
+    solve(begin, i, m - next, false);
+    solve(i, end, m - next - left, last);
+  }
+}//*/
+ 
+bool dp[33][33][1010];
+
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, m;
+    //res = 0;
+    cin >> n >> m;
+    //solve(0, n + 1, m);
+
+    //ppn(n);
+    //ppn(m);
+
+    memset(dp, 0, sizeof(dp));
+    for (int begin = 0; begin <= n; begin++) {
+      dp[begin][begin + 1][0] = true;
+    }
+
+    for (int size = 2; size <= n + 1; size++) {
+      for (int begin = 0; begin + size <= n + 1; begin++) {
+        int end = begin + size;
+        //ppn(begin); ppn(end);
+        for (int i = begin + 1; i < end; i++) {
+          int delta = end - begin;
+          //ppn(i); ppn(delta);
+          for (int j = 0; j <= m; j++) {
+            if (delta + j > m) break;
+            if (!dp[begin][i][j]) continue;
+            //ppn(j);
+            for (int k = 0; k <= m; k++) {
+              if (delta + j + k > m) break;
+              if (!dp[i][end][k]) continue;
+              dp[begin][end][delta + j + k] = true;
+            }
+          }
+        }
+      }
+    }
+
+    /*
+    for (int size = 1; size <= n + 1; size++) {
+      printf("size: %d\n", size);
+      for (int begin = 0; begin + size <= n + 1; begin++) {
+        int end = begin + size;
+        for (int j = 0; j <= m; j++) {
+          printf("%d", dp[begin][end][j] ? 1 : 0);
+        }
+        nl;
+      }
+      nl;
+    }//*/
+
+    int res = -1;
+    for (int i = m; i >= 0; i--) {
+      if (dp[0][n + 1][i]) {
+        res = m - i;
+        break;
+      }
+    }
+    cout << res << endl;
+  }
+} 
+

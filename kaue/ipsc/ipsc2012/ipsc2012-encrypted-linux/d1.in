@@ -1,0 +1,25 @@
+6
+
+For each year, print the year and the total number of submissions during that year. 
+Sort by year in ascending order.
+
+For each country, print the country and the total number of teams from that country.
+Sort by country in ascending order.
+
+Let C(I) be the number of teams from institution I over all years.
+Print C(I) and I for all institutions I such that C(I) >= 10.
+Sort results by decreasing C(I).
+Sort results with the same C(I) lexicographically according to I.
+
+Print the average number of team members.
+Round the result to 2 decimal places.
+Note 1: This is just a single value aggregated over all years.
+Note 2: Don't forget to first print the number of results (which is 1) and only then the correct average.
+
+For each division (open, secondary) compute the average age of team members who specified their age (i.e., have age > 0).
+Print division and the average age rounded to 1 decimal place.
+Sort results by division (first is open, then secondary).
+(Note: This is aggregated over all years.)
+
+For each year and each task in that year: print the year, the task name (a single letter) and the number of co-authors of that task.
+Sort by year, then by task.

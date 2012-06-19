@@ -1,0 +1,20 @@
+This is the list of files that are missing from this package to keep its size reasonable:
+
+e2.in
+
+j-example.in
+j-example.out
+j-example-1.mp3
+j-example-2.mp3
+
+j1.in
+j1-1.mp3
+j1-2.mp3
+j1-3.mp3
+
+j2.in
+j2-1.mp3
+j2-2.mp3
+j2-3.mp3
+j2-4.mp3
+j2-5.mp3

@@ -1,0 +1,44 @@
+6
+
+For each subproblem: print the year, the subproblem and the number of different accepted submissions.
+Use hashes to decide whether two submissions are different or not.
+Sort results by year and for the same year lexicographically by subproblem.
+
+Find the 20 longest accepted submissions. (You may assume that there is not a tie for the 20th place.)
+Find the set of teams that made these submissions.
+Note that this set may contain less than 20 teams.
+Print the team names in ascending order. (Each team just once, even if they had more than one submission.)
+
+The "fishiness" of a pair of teams (T1, T2) is defined as the number of different subproblems for which 
+the two teams received OK within 1 minute of each other (inclusive).
+Count the number of pairs of teams with fishiness at least 4.
+Note 1: The two teams must be different. We do not count pairs (x,x).
+Note 2: The pair (x,y) is the same pair as (y,x), count it just once, not twice.
+Note 3: Don't forget to first print the number of results (which is 1) and only then the correct count.
+
+Given a set of problems, the average success rate for that set of problems can be defined
+as the number of accepted submissions divided by the number of all submissions for those problems.
+For each author: print the author and the average success rate of problems he or she
+(co-)authored. Round success rates to exactly 3 decimal places.
+Sort results in the order of decreasing success rate.
+(There will be no ties.)
+
+Recall that the penalty for a solved subproblem is calculated as "T + 10 * R * D", where
+T is the time in minutes (ignoring seconds) from the start of the contest (i.e. for 13:03:47, T=63 minutes),
+R is the number of previous rejected (WA) submissions and
+D is the difficulty of the subproblem (D is either 1 or 2).
+For each subproblem with at least one successful submission, calculate the average penalty
+associated with a successful submission.
+Print the year, the subproblem (e.g., G1) and the average penalty over all successful submissions.
+Round the average penalty to two decimal places. Sort by year and then by subproblem.
+Do not print the subproblems that have no successful submissions.
+
+We say that a contestant (as identified by his/her name and his/her team's TIS) is
+happy with problem X if and only if his/her team does have an accepted submission for at least one subproblem
+of X and his/her name starts with the letter of the task.
+(For example, Bob is happy if his team solves at least one of B1 and B2.)
+The entertainment value of a problemsetter is computed as follows:
+Consider all the tasks he/she (co-)authored. For each task find the count of happy contestants.
+Sum all these counts.
+For each problemsetter (in lexicographical order), print the problemsetter and his/her entertainment value.
+(Note: Comparison between the first letter of contestant's name and task is case-sensitive!)

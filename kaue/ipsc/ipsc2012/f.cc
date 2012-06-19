@@ -1,0 +1,139 @@
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cctype>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
+#include <functional>
+#include <iostream>
+#include <iomanip>
+#include <limits>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <vector>
+ 
+#define r(i, n) rb(i, 0, n)
+#define rb(i, b, n) rbc(i, b, n, <)
+#define re(i, n) rbe(i, 0, n)
+#define rbe(i, b, n) rbc(i, b, n, <=)
+#define rbc(i, b, n, c) for(int i = (b); i c ((int)(n)); i++)
+ 
+#define ri r(i, n)
+#define rj r(j, n)
+#define rk r(k, n)
+#define rim r(i, m)
+#define rjm r(j, m)
+#define rkm r(k, m)
+
+#define p(x) cout << x << " "
+#define pl cout << endl
+#define pn(x) cout << x << endl
+#define pv(v) ri { p(v[i]); } pl;
+#define pm(m) ri { rjm { p(m[i][j]); } pl; } pl;
+#define pp(x) " "#x" " << x
+#define ppn(x) pn(pp(x))
+ 
+#define s(v) ((int) v.size())
+#define all(v) v.begin(), v.end()
+
+#define pb push_back
+#define mp make_pair
+#define nl cout << endl
+ 
+using namespace std;
+ 
+typedef unsigned long long ull;
+typedef long long ll;
+typedef long double ld;
+typedef vector<int> vi;
+typedef vector<string> vs;
+
+int n;
+ld vv[70];
+ull v[70];
+
+ld solve(int mask, int cur, int val) {
+  if (cur == n) {
+    return val;
+  }
+  ld next = solve(mask, cur + 1, (val + 1) % 2);
+  if (mask & (1 << cur)) {
+    ld res = 0;
+    // 1 - solve
+    //res += v[cur] * solve(mask, cur + 1, (val + 1) % 2);
+    //res += (1 - v[cur]) * solve(mask, cur + 1, val % 2);
+    res += v[cur] * next + (1 - v[cur]) * (1 - next);
+    return res;
+  }
+  //return solve(mask, cur + 1, val);
+  return 1 - next;
+}
+
+const ld EPS = 1e-7;
+int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    cin >> n;
+    ri {
+      //cin >> v[i];
+      scanf(" 0.%Ld", &v[i]);
+    }
+    bool found = false;
+    //cout << "n: " << n << " 1 << n: " << (1 << n) << endl;
+    for (int mask = 0; mask < (1 << n); mask++) {
+      ld res = solve(mask, 0, 0);
+      //cout << mask << ' ' << res << endl;
+      //ld sum = 0;
+      //for (int i = 0; i < n; i++) {
+        //if (mask & (1 << i)) {
+          //sum += v[i];
+        //}
+      //}
+      //cout << "diff: " << fabs(sum - res) << endl;
+      //assert(sum == res);
+      /*
+      if (fabs(res - 0.5) <= EPS && res != 0.5) {
+        cout << n << endl;
+        ri {
+          cout << v[i] << ' ';
+        }
+        cout << endl;
+        cout << "mask: " << mask << endl;
+        ri {
+          if (mask & (1 << i)) {
+            cout << 1;
+          } else {
+            cout << 0;
+          }
+        }
+        cout << endl;
+        cout << fixed << setprecision(10) << res << endl;
+      }
+      //*/
+      if (fabs(res - 0.5) <= EPS) {
+        found = true;
+        break;
+      }//*/
+    }
+    if (found) {
+      cout << 1 << endl;
+    } else {
+      cout << (int)0 << endl;
+    }
+  }
+} 
+

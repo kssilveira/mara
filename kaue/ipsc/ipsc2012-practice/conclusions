@@ -1,0 +1,13 @@
+solve easy the easy way
+process input from hard to check the actual complexity (eg n * target for problem P)
+write a checker whenever possible (eg problem P)
+let the previous version running while you work on the current version (eg problem Q)
+
+P
+  10^11, pd to sum s, 100 seconds
+
+Q
+  backtracking, order words by size, match bigger ones first
+
+R
+  10^3 squares, 10^9 to find all the sums of 3 squares

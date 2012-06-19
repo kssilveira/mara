@@ -1,0 +1,5 @@
+2
+
+For each year (in chronological order) find the first accepted submission. Print the year, the name of the team that made it and the time from the start of the contest. Time should be formatted as "mm:ss".
+
+For each year (in chronological order) print the year, the number of OK submissions and the number of WA submissions in that year.
